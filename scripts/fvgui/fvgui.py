@@ -90,11 +90,9 @@ class main():
     def form_url(self):
         parser = argparse.ArgumentParser(description='FlowVisor GUI: facilitating the visualisation of network slices in a running FlowVisor instance.')
         parser.add_argument('-i', '--ip', dest="ip", required=True, help='IP address of running FlowVisor instance.')
-        #parser.add_argument('-i', '--ip', dest="ip", default="192.168.56.102", help='IP address of running FlowVisor instance.')
         parser.add_argument('-p', '--port', dest="port",default="8081", help='JSON-RPC port of running FlowVisor isntance.')
         parser.add_argument('-u', '--username', dest="username", default="fvadmin", help='Username of FlowVisor user.')
         parser.add_argument('-pw', '--password', dest="password", required=True, help='Password of FlowVisor user.')
-        #parser.add_argument('-pw', '--password', dest="password", default="ofwork", help='Password of FlowVisor user.')
         arguments = parser.parse_args()
         self.url =  "https://%s:%s@%s:%d" % (arguments.username, arguments.password, arguments.ip, int(arguments.port))
 
