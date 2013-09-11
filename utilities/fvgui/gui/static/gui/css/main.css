@@ -28,6 +28,27 @@ svg {
   font-size: 34px;
 }
 
+.sidebar {
+  float:left;
+  width:270px;
+  height:500px;
+  margin-top:10px;
+  margin-left:10px;
+}
+
+.values {
+  color:#999;
+}
+
+.slicestats {
+  border: 1px solid #ccc;
+}
+
+.fvstats {
+  margin-top:10px;
+  border: 1px solid #ccc;
+}
+
 .select {
   float:right;
    width: 240px;

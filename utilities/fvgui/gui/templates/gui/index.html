@@ -60,6 +60,7 @@
             .data(graph.nodes)
           .enter().append("circle")
             .attr("class", "node")
+            .attr("xlink:href", function(d) {return "http://somelink.com/link.php?id="})
             .attr("r", 5)
             .style("fill", function(d) { return color(d.group); })
             .call(force.drag);
@@ -77,5 +78,16 @@
               .attr("cy", function(d) { return d.y; });
       });
       </script>
+  </div>
+  <div class="sidebar">
+    {% load gui_extras %}
+    <div class="slicestats">
+      <b>Slice Stats</b></br></br>
+      {{ slicestats|json_list|safe }}
+    </div>
+    <div class="fvstats">
+      <b>FV Stats</b></br></br>
+      {{ fvstats|json_list|safe }}
+    </div>
   </div>
 </body>

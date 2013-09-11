@@ -180,7 +180,9 @@ def index(request):
     url =  "https://%s:%s@%s:%d" % ("fvadmin", "ofwork", "192.168.56.101", int("8081"))
     get_links()
     topology = build_full_topology()
-    context = {'slices' : get_slices(), 'name' : 'fvadmin', 'topology' : topology}
+    slicestats = do_fv_call("list-slice-health", {'slice-name' : 'fvadmin'})
+    fvstats = do_fv_call("list-fv-health")
+    context = {'slices' : get_slices(), 'name' : 'fvadmin', 'topology' : topology, 'slicestats' : json.dumps(slicestats["result"]), 'fvstats' : json.dumps(fvstats["result"])}
     return render(request, 'gui/index.html', context)
 
 def slice(request, slice_name):
@@ -188,6 +190,8 @@ def slice(request, slice_name):
     url =  "https://%s:%s@%s:%d" % ("fvadmin", "ofwork", "192.168.56.101", int("8081"))
     _slice = "fvadmin"
     get_links()
+    slicestats = do_fv_call("list-slice-health", {'slice-name' : slice_name})
+    fvstats = do_fv_call("list-fv-health")
     topology = build_full_topology(slice_name)
-    context = {'slices' : get_slices(), 'name' : slice_name, 'topology' : topology}
+    context = {'slices' : get_slices(), 'name' : slice_name, 'topology' : topology, 'slicestats' : json.dumps(slicestats["result"]), 'fvstats' : json.dumps(fvstats["result"])}
     return render(request, 'gui/index.html', context)
