@@ -1,0 +1,50 @@
+html * {
+    font-family: "Lucida Console", Monaco, monospace ! important;
+}
+
+svg {
+  border: 1px solid #ccc;
+  float:left;
+  margin-top:10px;
+}
+
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+.link {
+  stroke: #999;
+  stroke-opacity: .6;
+}
+
+.header {
+  width:960px;
+}
+
+.title {
+  float:left;
+  height:34px;
+  font-size: 34px;
+}
+
+.select {
+  float:right;
+   width: 240px;
+   height: 34px;
+   overflow: hidden;
+   background: url(../images/down_arrow_select.jpg) no-repeat right #ddd;
+   border: 1px solid #ccc;
+}
+
+.select select {
+   background: transparent;
+   width: 268px;
+   padding: 5px;
+   font-size: 16px;
+   line-height: 1;
+   border: 0;
+   border-radius: 0;
+   height: 34px;
+   -webkit-appearance: none;
+}
