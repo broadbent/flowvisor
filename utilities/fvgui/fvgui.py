@@ -5,6 +5,8 @@
 import urllib
 import json
 import ConfigParser
+import manage
+import threading
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 from SocketServer import ThreadingMixIn
 
@@ -176,8 +178,14 @@ if __name__ == '__main__':
     fvgui_ip = str(config.get('fvgui', 'ip'))
     fvgui_port = int(config.get('fvgui', 'port'))
     fvgui_url = 'http://%s:%d' % (fvgui_ip, fvgui_port)
+    web_ip = str(config.get('web', 'ip'))
+    web_port = int(config.get('web', 'port'))
     build_slices()
     do_fv_callbacks(fvgui_url)
+    web_host = web_ip + ':' + str(web_port)
+    django_args = ['manage.py', 'runserver', web_host, '--noreload']
+    django_server = threading.Thread(target=manage.main, args=(django_args,), kwargs={})
+    django_server.start()
     print 'fvgui running on %s:%i...' % (fvgui_ip, fvgui_port)
     server = ThreadedHTTPServer((fvgui_ip, fvgui_port), JSONHandler)
     server.serve_forever()

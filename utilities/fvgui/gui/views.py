@@ -33,7 +33,7 @@ def do_fv_call(method, _input=None):
         except json.JSONDecodeException as e:
             print 'Error: Could not decode JSON: %s' %e 
     except IOError as e:
-        print 'Error: Could not connect to FlowVisor instance: %s' % e
+        print 'Error: Could not connect to fvgui instance: %s' % e
 
 def config():
     global init
