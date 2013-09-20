@@ -2,6 +2,7 @@
 <meta charset="utf-8">
 
 <head>
+  <title>FlowVisor GUI</title>
   {% load staticfiles %}
   <link rel="stylesheet" href="{% static "gui/css/main.css" %}" type="text/css">
   <script type="text/javascript" src="{% static "gui/js/d3.v3/d3.v3.min.js" %}"></script>
@@ -37,7 +38,7 @@
 
       var force = d3.layout.force()
           .charge(-120)
-          .linkDistance(30)
+          .linkDistance(50)
           .size([width, height]);
 
       var svg = d3.select("body").append("svg")
@@ -60,13 +61,17 @@
             .data(graph.nodes)
           .enter().append("circle")
             .attr("class", "node")
-            .attr("xlink:href", function(d) {return "http://somelink.com/link.php?id="})
-            .attr("r", 5)
+            .attr("r", 10)
             .style("fill", function(d) { return color(d.group); })
+            .on("click", click)
             .call(force.drag);
 
         node.append("title")
-            .text(function(d) { return d.name; });
+          .text(function(d) { return d.name; });
+
+        function click(d) {
+          window.open ('dpid/' + d.id + '/', '_self', false)
+        }
 
         force.on("tick", function() {
           link.attr("x1", function(d) { return d.source.x; })
@@ -81,13 +86,17 @@
   </div>
   <div class="sidebar">
     {% load gui_extras %}
-    <div class="slicestats">
+    <div class="item">
       <b>Slice Stats</b></br></br>
       {{ slicestats|json_list|safe }}
     </div>
-    <div class="fvstats">
+    <div class="item sep">
       <b>FV Stats</b></br></br>
       {{ fvstats|json_list|safe }}
+    </div>
+    <div class="item sep">
+      <b>FV Version</b></br></br>
+      {{ fvversion|json_list|safe }}
     </div>
   </div>
 </body>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+  <title>FlowVisor GUI</title>
+  {% load staticfiles %}
+  <link rel="stylesheet" href="{% static "gui/css/main.css" %}" type="text/css">
+  <script type="text/javascript" src="{% static "gui/js/d3.v3/d3.v3.min.js" %}"></script>
+</head>
+
+<body>
+	{% load gui_extras %}
+  <div class="header">
+    <div class="title">
+      FlowVisor GUI 
+    </div>
+    <div class="dpid">
+    	{{ dpid }}
+    </div>
+  </div>
+  <div class = "centre">
+  	<div class="item">
+	  	<b>Flowtable</b></br></br>
+	  	{{ flowtable|json_list|safe }}
+ 	 </div>
+	  <div class="item sep">
+		      <b>DPID Stats</b></br></br>
+		      {{ dpidstats|json_list|safe }}
+	    </div>
+	   </div>
+  <div class="sidebar">
+	<div class="item">
+	      <b>DPID Info</b></br></br>
+	      {{ dpidinfo|json_list|safe }}
+	 </div>
+  </div>
+
+</body>

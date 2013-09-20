@@ -13,7 +13,6 @@ def json_list(value):
     """
     try:
         dict = json.loads(value)
-        print dict
         result = []
         for field in dict:
             result.append(str(field) + ": <span class=values>" + str(json.dumps(dict[field])) + "</span></br>")

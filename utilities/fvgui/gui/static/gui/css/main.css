@@ -8,6 +8,23 @@ svg {
   margin-top:10px;
 }
 
+.centre {
+  float:left;
+  margin-top:10px;
+  width:960px;
+}
+
+.sep {
+  margin-top:10px;
+}
+
+.dpid {
+  float:right;
+    height:34px;
+  font-size: 34px;
+  color: #999;
+}
+
 .node {
   stroke: #fff;
   stroke-width: 1.5px;
@@ -40,12 +57,8 @@ svg {
   color:#999;
 }
 
-.slicestats {
-  border: 1px solid #ccc;
-}
-
-.fvstats {
-  margin-top:10px;
+.item {
+  padding:5px;
   border: 1px solid #ccc;
 }
 
