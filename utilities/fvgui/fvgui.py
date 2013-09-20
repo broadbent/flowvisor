@@ -16,6 +16,7 @@ links = {}
 topologies = {}
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
+    '''Creates a threaded HTTP server.'''
     allow_reuse_address = True
 
 class JSONHandler(BaseHTTPRequestHandler):
@@ -26,6 +27,10 @@ class JSONHandler(BaseHTTPRequestHandler):
         pass
 
     def do_POST(self):
+        '''Handle incoming JSON request.
+        Note: If the method is not available in FVGUI, the request is handed off to the 
+        FlowVisor JSON Server (acting as a passthrough).
+        '''
         header = self.headers.getheader('content-type')
         content_length = int(self.headers.getheader('content-length'))
         body = self.rfile.read(content_length)
@@ -55,6 +60,7 @@ class JSONHandler(BaseHTTPRequestHandler):
                 self.wfile.write(response_data)
 
     def send_reply(self, _id, result):
+        '''Send a reply back to the client.'''
         self.send_response(200)
         self.send_header('Content-type','application/json')
         self.end_headers()
@@ -62,6 +68,7 @@ class JSONHandler(BaseHTTPRequestHandler):
         self.wfile.write(message)
 
 def get_flowtable(dpid):
+    '''Get the most up-to-date version of a flowtable for a given DPID.'''
     try:
         dpid_long = get_long_from_dpid(dpid)
         return flowtables[dpid_long]
@@ -69,17 +76,20 @@ def get_flowtable(dpid):
         return {'message' : 'No flowtable currently available. Waiting for callback.'}
 
 def get_long_from_dpid(dpid):
+    '''Convert a DPID into a long'''
     dpid = dpid.replace(':', '')
     dpid = long(dpid, 16)
     return dpid
 
 def get_slices():
+    '''Retrieve a list of all slices visible to the user.'''
     slices = []
     for _slice in topologies:
         slices.append({'name' : _slice})
     return slices
 
 def build_slices():
+    '''Build a full set of topologies for every slice visible to the user.'''
     global topologies
     global links 
     links = do_fv_call('list-links')
@@ -107,6 +117,7 @@ def build_slices():
         return False 
 
 def build_links_for_slice(_slice):
+    '''Build links between DPIDs for a given slice.'''
     global topologies
     global links
     d3_links = list()  
@@ -118,18 +129,21 @@ def build_links_for_slice(_slice):
     topologies[_slice].update({'links':d3_links})
 
 def get_id_from_dpid(dpid, _slice):
+    '''Retrieve the ID for a given DPID.'''
     for node in topologies[_slice]['nodes']:
         if str(node['dpid']) == str(dpid):
             return node['id']
     return None
 
 def get_dpid_from_id(_id, _slice):
+    '''Retrieve the DPID for a given ID.'''
     for node in topologies[_slice]['nodes']:
         if int(node['id']) == int(_id):
             return node['dpid']
     return None
 
 def do_fv_call(method, _input=None):
+    '''Make call to FlowVIsor JSON server  with given method and input.'''
     global call_id
     if _input==None:
         post_data = None
@@ -154,6 +168,7 @@ def do_fv_call(method, _input=None):
         print 'Error: Could not connect to FlowVisor instance: %s' % e
 
 def do_fv_callbacks(url):
+    '''Establish callback with FlowVisor for flowtable, slice and device changes.'''
     callback = {'url' : url, 'method' : 'flowtable-callback', 'event-type' : 'FLOWTABLE_CALLBACK', 'name' : 'fvgui'}
     do_fv_call('register-event-callback', callback)
     callback['method'] = 'device-connected'
@@ -167,6 +182,7 @@ def do_fv_callbacks(url):
     do_fv_call('register-event-callback', callback)
 
 if __name__ == '__main__':
+    '''Retrieve configuration settings and start FVGUI server and web server.'''
     global fv_url
     config = ConfigParser.ConfigParser()
     config.read("fvgui.ini")

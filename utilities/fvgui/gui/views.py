@@ -11,7 +11,8 @@ fvgui_url = None
 init = False
 call_id = 1
 
-def do_fv_call(method, _input=None):
+def do_fvgui_call(method, _input=None):
+    '''Make call to FVGUI JSON server  with given method and input.'''
     global call_id
     if _input==None:
         post_data = None
@@ -33,9 +34,12 @@ def do_fv_call(method, _input=None):
         except json.JSONDecodeException as e:
             print 'Error: Could not decode JSON: %s' %e 
     except IOError as e:
-        print 'Error: Could not connect to fvgui instance: %s' % e
+        print 'Error: Could not connect to FVGUI JSON Server: %s' % e
 
 def config():
+    '''Read configuration file for IP and port of FVGUI JSON server.
+    Note: Only done once for the first request - persistent afterwards.
+    '''
     global init
     global fvgui_url
     config = ConfigParser.ConfigParser()
@@ -46,36 +50,40 @@ def config():
     init = True
 
 def index(request):
+    '''Handle request for visualisation of a slice's topology without a given slice.
+    Note: Will use first slice returned from list-slices.
+    '''
     if not init:
         config()   
-    slices = do_fv_call('list-slices')
-    # set default slice as first slice in list-slices
+    slices = do_fvgui_call('list-slices')
     _slice = slices['result'][0]['name']
-    topology = do_fv_call('list-topology', {'slice-name' : _slice})
-    slicestats = do_fv_call('list-slice-health', {'slice-name' : _slice})
-    fvstats = do_fv_call('list-fv-health')
-    fvversion = do_fv_call('list-version')
+    topology = do_fvgui_call('list-topology', {'slice-name' : _slice})
+    slicestats = do_fvgui_call('list-slice-health', {'slice-name' : _slice})
+    fvstats = do_fvgui_call('list-fv-health')
+    fvversion = do_fvgui_call('list-version')
     context = {'slices' : slices['result'], 'name' : _slice, 'topology' : json.dumps(topology['result']), 'slicestats' : json.dumps(slicestats['result']), 'fvstats' : json.dumps(fvstats['result']), 'fvversion' : json.dumps(fvversion['result'])}
     return render(request, 'gui/index.html', context)
 
 def slice(request, _slice):
+    '''Handle request for the visualisation of a specific slice's topology.'''
     if not init:
         config() 
-    topology = do_fv_call('list-topology', {'slice-name' : _slice})
-    slices = do_fv_call('list-slices')
-    slicestats = do_fv_call('list-slice-health', {'slice-name' : _slice})
-    fvstats = do_fv_call('list-fv-health')
-    fvversion = do_fv_call('list-version')
+    topology = do_fvgui_call('list-topology', {'slice-name' : _slice})
+    slices = do_fvgui_call('list-slices')
+    slicestats = do_fvgui_call('list-slice-health', {'slice-name' : _slice})
+    fvstats = do_fvgui_call('list-fv-health')
+    fvversion = do_fvgui_call('list-version')
     context = {'slices' : slices['result'], 'name' : _slice, 'topology' : json.dumps(topology['result']), 'slicestats' : json.dumps(slicestats['result']), 'fvstats' : json.dumps(fvstats['result']), 'fvversion' : json.dumps(fvversion['result'])}
     return render(request, 'gui/index.html', context)
 
 def dpid(request, _slice, _id):
+    '''Handle request for the visualisation of a specific DPID's flowtable.'''
     if not init:
         config()
-    dpid = do_fv_call('list-dpid', {'id' : _id, 'slice-name' : _slice})
+    dpid = do_fvgui_call('list-dpid', {'id' : _id, 'slice-name' : _slice})
     dpid = dpid['result']
-    dpidinfo = do_fv_call('list-datapath-info', {'dpid' : dpid})
-    dpidstats = do_fv_call('list-datapath-stats', {'dpid' : dpid})
-    flowtable = do_fv_call('list-flowtable', {'dpid' : dpid})
-    context = {'dpid': dpid, 'id' : _id, 'dpidinfo' : json.dumps(dpidinfo['result']), 'dpidstats' : json.dumps(dpidstats['result']), 'flowtable' : json.dumps(flowtable['result'])}
+    dpidinfo = do_fvgui_call('list-datapath-info', {'dpid' : dpid})
+    dpidstats = do_fvgui_call('list-datapath-stats', {'dpid' : dpid})
+    flowtable = do_fvgui_call('list-flowtable', {'dpid' : dpid})
+    context = {'dpid': dpid, 'slice' : _slice, 'id' : _id, 'dpidinfo' : json.dumps(dpidinfo['result']), 'dpidstats' : json.dumps(dpidstats['result']), 'flowtable' : json.dumps(flowtable['result'])}
     return render(request, 'gui/dpid.html', context)

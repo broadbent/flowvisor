@@ -18,13 +18,13 @@ FVGUI is built using Django 1.5.3: <https://www.djangoproject.com/download/1.5.3
 
 The latest version of D3.js is included with FVGUI.
 
-## Configuring FlowVisor GUI ##
+## Configuration ##
 
 FVGUI is configured via the ```fvgui.ini``` file. The distribution includes a sample configuration file; you will need to change this to atleast point to your running FlowVisor instance. This configuration file also facilitates starting the serving on an alternate IP and port.
 
-## Running FlowVisor GUI ##
+## Run ##
 
-FVGUI uses Django's built in server. This is automatically started when you run fvgui:
+FVGUI uses Django's built in server. This is automatically started when you run FVGUI with:
 
 ```bash
 $ python fvgui.py 
